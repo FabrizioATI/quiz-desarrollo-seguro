@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Quiz Desarrollo Seguro</title>
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--tx:#1b2430;--mut:#5b6677;--pri:#2e5597;--prib:#e8eefb;--ok:#1a7f45;--okb:#e3f5ea;--bad:#b83227;--badb:#fdeceb;--bd:#d9e0ea;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#12161d;--card:#1b222c;--tx:#e8edf5;--mut:#9aa7b8;--pri:#7fa6f0;--prib:#222d44;--ok:#5fd18f;--okb:#17301f;--bad:#ff8b80;--badb:#3a1d1b;--bd:#2c3644}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#12161d;--card:#1b222c;--tx:#e8edf5;--mut:#9aa7b8;--pri:#7fa6f0;--prib:#222d44;--ok:#5fd18f;--okb:#17301f;--bad:#ff8b80;--badb:#3a1d1b;--bd:#2c3644}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.w{max-width:760px;margin:0 auto;padding:20px 16px 48px}
+h1{font-size:22px;margin:0 0 2px}.sub{color:var(--mut);margin:0 0 16px;font-size:14px}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.tab,.chip,.btn{font:inherit;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:999px;padding:8px 14px;cursor:pointer}
+.tab[aria-pressed=true],.chip[aria-pressed=true]{background:var(--pri);border-color:var(--pri);color:#fff}
+.chip{font-size:14px;padding:6px 12px;border-radius:14px;text-align:left}
+.btn{border-radius:10px;font-weight:600}.btn.p{background:var(--pri);border-color:var(--pri);color:#fff}.btn:disabled{opacity:.45;cursor:default}
+.bar{height:8px;background:var(--bd);border-radius:99px;overflow:hidden;margin:14px 0 6px}.bar i{display:block;height:100%;background:var(--pri);transition:width .25s}
+.meta{display:flex;justify-content:space-between;color:var(--mut);font-size:13px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:20px;margin-top:12px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.tag{display:inline-block;font-size:12px;font-weight:700;color:var(--pri);background:var(--prib);border-radius:99px;padding:2px 10px;margin-bottom:10px}
+.q{font-size:19px;font-weight:650;margin:0 0 14px}
+.o{display:block;width:100%;text-align:left;font:inherit;color:var(--tx);background:var(--card);border:2px solid var(--bd);border-radius:12px;padding:12px 14px;margin:8px 0;cursor:pointer}
+.o:hover:not(:disabled){border-color:var(--pri)}.o.ok{border-color:var(--ok);background:var(--okb)}.o.no{border-color:var(--bad);background:var(--badb)}.o:disabled{cursor:default}
+.fc{min-height:220px;display:flex;flex-direction:column;justify-content:center;text-align:center;cursor:pointer;user-select:none}
+.fc.back{border-color:var(--ok);background:var(--okb)}.fc small{color:var(--mut)}
+.big{font-size:40px;font-weight:800;margin:6px 0}.li{padding:10px 0;border-top:1px solid var(--bd);font-size:15px}.li b{color:var(--ok)}
+.doc{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px 14px;margin:10px 0}#dmsg:empty{display:none}
+.o.sl{border-color:var(--pri);background:var(--prib)}.fb{padding:12px 14px;border-radius:12px;font-weight:600;margin-top:10px}.fb.ok{background:var(--okb);color:var(--ok)}.fb.no{background:var(--badb);color:var(--bad)}.res h1{font-size:22px;margin:0 0 6px;color:var(--pri)}.res h2{font-size:18px;margin:22px 0 6px;color:var(--pri)}.res ul,.res ol{padding-left:22px;margin:6px 0}.res li{margin:4px 0}
+</style></head><body><div class="w">
+<h1>🛡️ Quiz: Desarrollo Seguro</h1><p class="sub">Practica por tema con quiz y tarjetas</p>
+<div class="row" id="modes"></div><div class="row" id="topics"></div><div id="app"></div></div>
+<script>
+const T={1:"Seguridad en el ciclo de vida de desarrollo de software (SDLC)"};
+// [tema, pregunta, correcta, trampa1, trampa2, trampa3]
+const D=[
+["G","¿Qué significa que el Secure SDLC sea proactivo?","Prevenir antes de que pase el problema","Responder rápido cuando ya ocurrió el ataque","Probar la app solo antes del despliegue","Aplicar parches cuando se descubre una falla"],
+["G","¿Qué busca el Secure SDLC?","Identificar y mitigar vulnerabilidades lo antes posible, reduciendo costos y riesgos","Corregir vulnerabilidades en producción con parches oportunos","Comprobar con pentesting que los controles funcionan","Medir el nivel de madurez de la organización"],
+["G","¿En qué etapas se incorporan actividades y controles de seguridad?","En todas, desde la concepción hasta el retiro del software","Solo en Verificación (pruebas)","Solo en Diseño","Solo en Operaciones y mantenimiento"],
+["G","¿Qué dos marcos guían el desarrollo seguro en este capítulo?","OWASP SAMM y Microsoft SDL","STRIDE y DREAD","ASVS y MASVS","OWASP ZAP y Dependency-Check"],
+["G","Según la idea final, un SDLC seguro es:","Un cambio cultural: la seguridad es responsabilidad de todos","Una lista de tareas que se marca al terminar","Una etapa final de pruebas antes del despliegue","Una tarea exclusiva del equipo de seguridad"],
+["F","¿Cuál es el orden correcto de las fases del Secure SDLC?","Formación → Requisitos → Diseño → Implementación → Verificación → Despliegue → Operaciones","Requisitos → Formación → Diseño → Implementación → Verificación → Despliegue → Operaciones","Formación → Requisitos → Diseño → Verificación → Implementación → Despliegue → Operaciones","Formación → Requisitos → Implementación → Diseño → Verificación → Operaciones → Despliegue"],
+["F","Formación y concienciación: ¿cuál es su actividad?","Capacitar al equipo en codificación segura (ej. OWASP Top 10)","Definir requisitos de seguridad y perfil de riesgo","Configurar el entorno de forma segura","Monitorear y tener un plan de respuesta a incidentes"],
+["F","Requisitos: ¿cuál es su actividad?","Definir requisitos de seguridad, perfil de riesgo y modelado de amenazas inicial","Usar SAST mientras se escribe el código","Hacer pentesting y revisión de código","Capacitar al equipo en codificación segura"],
+["F","Diseño: ¿cuál es su actividad?","Modelado de amenazas, mínimo privilegio, defensa en profundidad y frameworks seguros","Validar entradas y codificar salidas","Aplicar parches de seguridad oportunos","Ejecutar DAST sobre la app en pruebas"],
+["F","Implementación: ¿cuál es su actividad?","Codificación segura, SAST, validar entradas y codificar salidas","Pentesting y revisión de código","Desplegar con un proceso seguro","Definir el perfil de riesgo"],
+["F","Verificación: ¿cuál es su actividad?","SAST, DAST, pentesting y revisión de código","Validar entradas y codificar salidas","Configurar el entorno y desplegar de forma segura","Modelado de amenazas inicial"],
+["F","Despliegue: ¿cuál es su actividad?","Configurar el entorno de forma segura y desplegar con un proceso seguro","Aplicar parches y monitorear en producción","Revisión de diseño y modelado de amenazas","Capacitar a los desarrolladores"],
+["F","Operaciones y mantenimiento: ¿cuál es su actividad?","Monitorear, plan de respuesta a incidentes y parches oportunos","Configurar el entorno de despliegue","Revisar el código con SAST","Definir requisitos de seguridad"],
+["F","Formación y concienciación: ¿cuál es su importancia?","Los desarrolladores entienden las amenazas desde el inicio","Evita fallos de arquitectura costosos de corregir","Comprueba que los controles funcionan","Mantiene la app segura frente a amenazas nuevas"],
+["F","Requisitos: ¿cuál es su importancia?","Establece las bases de seguridad que debe cumplir la app","Reduce los bugs de seguridad al programar","Evita que una mala configuración exponga la app","Descubre vulnerabilidades no detectadas"],
+["F","Diseño: ¿cuál es su importancia?","Evita fallos de arquitectura, que son costosos de corregir después","Los desarrolladores entienden las amenazas desde el inicio","Reduce los bugs de seguridad comunes al programar","Establece las bases de seguridad de la app"],
+["F","Implementación: ¿cuál es su importancia?","Reduce los bugs de seguridad comunes al programar","Evita fallos de arquitectura costosos","Descubre vulnerabilidades no detectadas","La app sigue segura frente a amenazas nuevas"],
+["F","Verificación: ¿cuál es su importancia?","Comprueba que los controles funcionan y descubre vulnerabilidades no detectadas","Reduce los bugs comunes al programar","Establece las bases de seguridad","Evita que una mala configuración exponga la app"],
+["F","Despliegue: ¿cuál es su importancia?","Evita que una mala configuración exponga la app","Comprueba que los controles funcionan","Evita fallos de arquitectura","La app sigue segura frente a amenazas nuevas"],
+["F","Operaciones y mantenimiento: ¿cuál es su importancia?","La app sigue segura frente a amenazas nuevas","Evita que una mala configuración exponga la app","Los desarrolladores entienden las amenazas","Descubre vulnerabilidades antes del despliegue"],
+["S","¿Qué es OWASP SAMM?","Un marco abierto para evaluar, formular e implementar un plan de seguridad de software","Un modelo de amenazas que clasifica ataques (STRIDE)","Un proceso de Microsoft con 10 prácticas de seguridad","Un estándar de verificación para apps móviles (MASVS)"],
+["S","SAMM es agnóstico a la tecnología y al proceso. Significa que:","Sirve con cualquier tecnología y metodología (cascada, ágil, DevOps)","Solo funciona con la metodología en cascada","Solo aplica a empresas grandes","Depende del lenguaje de programación usado"],
+["S","¿Cuáles son las 5 funciones de negocio de SAMM?","Gobernanza, Diseño, Implementación, Verificación, Operaciones","Formación, Requisitos, Diseño, Implementación, Verificación","Gobernanza, Diseño, Implementación, Verificación, Despliegue","Gobernanza, Requisitos, Implementación, Pruebas, Operaciones"],
+["S","¿Cuántas prácticas de seguridad tiene SAMM en total?","15 (3 por cada función)","10 (las de Microsoft SDL)","7 (una por cada fase del SDLC)","5 (una por cada función)"],
+["S","¿Cuál de estas prácticas pertenece a Gobernanza?","Estrategia y métricas","Evaluación de amenazas","Gestión de defectos","Gestión operacional"],
+["S","¿Cuál de estas prácticas pertenece a Diseño?","Arquitectura segura","Pruebas de seguridad","Gestión de incidentes","Política y cumplimiento"],
+["S","¿Cuál de estas prácticas pertenece a Implementación?","Despliegue seguro","Evaluación de arquitectura","Educación y guía","Gestión del entorno"],
+["S","¿Cuál de estas prácticas pertenece a Verificación?","Pruebas basadas en requisitos","Requisitos de seguridad","Construcción segura","Gestión de incidentes"],
+["S","¿Cuál de estas prácticas pertenece a Operaciones?","Gestión del entorno","Estrategia y métricas","Gestión de defectos","Evaluación de amenazas"],
+["S","¿Cuántos “flujos” tiene cada práctica de SAMM?","2","3 (las prácticas de cada función)","5 (las funciones de negocio)","15 (las prácticas totales)"],
+["S","SAMM, Nivel 0 de madurez:","Práctica no cumplida (punto de partida)","Comprensión básica, implementación ad hoc","Implementación más sistemática","Comprensión exhaustiva y eficiente a escala"],
+["S","SAMM, Nivel 1 de madurez:","Comprensión básica, implementación ad hoc","Práctica no cumplida (punto de partida)","Implementación más sistemática","Comprensión exhaustiva y eficiente a escala"],
+["S","SAMM, Nivel 2 de madurez:","Implementación más sistemática","Comprensión básica, implementación ad hoc","Práctica no cumplida (punto de partida)","Comprensión exhaustiva y eficiente a escala"],
+["S","SAMM, Nivel 3 de madurez:","Comprensión exhaustiva de la práctica, eficiente a escala","Implementación más sistemática","Comprensión básica, implementación ad hoc","Práctica no cumplida (punto de partida)"],
+["M","¿Qué integra Microsoft SDL en cada fase del desarrollo?","Seguridad y privacidad","Solo gobernanza y cumplimiento","Solo pruebas SAST y DAST","Madurez y métricas por práctica"],
+["M","¿Qué significa que Microsoft SDL sea evolutivo?","Se actualiza con nuevas técnicas defensivas y amenazas emergentes","Mide cuatro niveles de madurez por práctica","Se divide en 5 funciones de negocio","Solo aplica a desarrollo en cascada"],
+["M","¿Cuántas prácticas clave recomienda Microsoft SDL?","10","15 (las de SAMM)","5 (las funciones de SAMM)","7 (las fases del SDLC)"],
+["M","¿Cuál NO es una práctica clave de Microsoft SDL?","Definir niveles de madurez 0 a 3 para cada práctica","Asegurar la cadena de suministro de software","Definir y usar estándares de criptografía","Asegurar el entorno de ingeniería"]
+];
+D.forEach(d=>d[0]="1"); // todas las preguntas de esta sección pertenecen al tema 1
+const RES={1:"<h1><strong>1. Seguridad en el ciclo de vida de desarrollo de software (SDLC)</strong></h1><h2><strong>Desarrollo seguro de software</strong></h2><ul><li>Fundamental para construir aplicaciones resilientes.</li><li>Se enfoca en prevenir antes de que pase el problema (proactivo).</li><li>Se denomina <strong>Secure SDLC</strong>.</li><li>Busca identificar y mitigar vulnerabilidades lo antes posible, reduciendo:<ul><li>Costos</li><li>Riesgos</li></ul></li><li>Para lograrlo, incorpora actividades y controles de seguridad en <strong>todas</strong> las etapas, desde la concepción hasta el retiro del software.</li><li>Marcos que lo guían: <strong>OWASP SAMM</strong> y <strong>Microsoft SDL</strong>.</li></ul><h2><strong>Fases del Secure SDLC</strong></h2><ul><li><strong>Formación y concienciación</strong><ul><li>Actividad: capacitar al equipo en codificación segura</li><li>Importancia: los desarrolladores entienden las amenazas desde el inicio.</li></ul></li><li><strong>Requisitos</strong><ul><li>Actividad: definir requisitos de seguridad, perfil de riesgo y modelado de amenazas inicial.</li><li>Importancia: establece las bases de seguridad que debe cumplir la app.</li></ul></li><li><strong>Diseño</strong><ul><li>Actividad: modelado de amenazas, principios de diseño seguro y frameworks seguros.</li><li>Importancia: evita fallos de arquitectura, que son costosos de corregir después.</li></ul></li><li><strong>Implementación</strong><ul><li>Actividad: codificación segura, SAST, validar entradas y codificar salidas.</li><li>Importancia: reduce los bugs de seguridad comunes al programar.</li></ul></li><li><strong>Verificación</strong><ul><li>Actividad: SAST, DAST, pentesting y revisión de código.</li><li>Importancia: comprueba que los controles funcionan y descubre vulnerabilidades no detectadas.</li></ul></li><li><strong>Despliegue</strong><ul><li>Actividad: configurar el entorno de forma segura y desplegar con un proceso seguro.</li><li>Importancia: evita que una mala configuración exponga la app.</li></ul></li><li><strong>Operaciones y mantenimiento</strong><ul><li>Actividad: monitorear, plan de respuesta a incidentes y parches oportunos.</li><li>Importancia: la app sigue segura frente a amenazas nuevas.</li></ul></li></ul><h2><strong>OWASP SAMM (Software Assurance Maturity Model)</strong></h2><ul><li>Marco abierto para <strong>evaluar, formular e implementar</strong> un plan de seguridad de software.</li><li>Agnóstico a la tecnología y al proceso (cascada, ágil, DevOps).</li><li>Sirve para medir y mejorar la seguridad en empresas de cualquier tamaño.</li><li><strong>5 funciones de negocio</strong>:<ul><li><strong>Gobernanza:</strong> estrategia y métricas, política y cumplimiento, educación y guía.</li><li><strong>Diseño:</strong> evaluación de amenazas, requisitos de seguridad, arquitectura segura.</li><li><strong>Implementación:</strong> construcción segura, despliegue seguro, gestión de defectos.</li><li><strong>Verificación:</strong> evaluación de arquitectura, pruebas basadas en requisitos, pruebas de seguridad.</li><li><strong>Operaciones:</strong> gestión de incidentes, gestión del entorno, gestión operacional.</li></ul></li><li>Cada práctica tiene 2 “flujos”.</li><li><strong>Niveles de madurez:</strong><ul><li>Nivel 0: práctica no cumplida (punto de partida).</li><li>Nivel 1: comprensión básica, implementación ad hoc.</li><li>Nivel 2: implementación más sistemática.</li><li>Nivel 3: comprensión exhaustiva, funciona de forma eficiente a escala.</li></ul></li></ul><h2><strong>Microsoft SDL (Security Development Lifecycle)</strong></h2><ul><li>Proceso que integra <strong>seguridad y privacidad</strong> en cada fase del desarrollo.</li><li>Sirve para cualquier metodología (cascada, ágil, DevOps).</li><li>Es evolutivo: se actualiza con nuevas técnicas y amenazas.</li><li><strong>10 prácticas clave:</strong><ol type=\"1\"><li>Establecer estándares de seguridad, métricas y gobernanza.</li><li>Usar características, lenguajes y marcos de seguridad probados.</li><li>Revisión de diseño de seguridad y modelado de amenazas.</li><li>Definir y usar estándares de criptografía.</li><li>Asegurar la cadena de suministro de software.</li><li>Asegurar el entorno de ingeniería.</li><li>Realizar pruebas de seguridad.</li><li>Garantizar la seguridad de la plataforma operativa.</li><li>Implementar monitoreo y respuesta de seguridad.</li><li>Proporcionar capacitación en seguridad.</li></ol></li></ul>"};
+const $=s=>document.querySelector(s),app=$("#app"),KEY="quizDS_v1";
+const sh=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+let S={mode:"quiz",topic:"all",pool:[],i:0,ci:0,ok:0,bad:[],sel:null,ck:false,flip:false};
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify({m:S.mode,t:S.topic,p:S.pool.map(p=>[p.k,p.o]),i:S.i,ci:S.ci,ok:S.ok,b:S.bad,s:S.sel,c:S.ck}))}catch(e){}};
+function load(){try{const r=JSON.parse(localStorage.getItem(KEY)||"null");
+ if(!r||!Array.isArray(r.p)||!r.p.length||!r.p.every(([k,o])=>D[k]&&Array.isArray(o)&&o.length==4))return false;
+ S.pool=r.p.map(([k,o])=>({k,d:D[k],o}));Object.assign(S,{mode:r.m||"quiz",topic:r.t||"all",i:r.i|0,ci:r.ci|0,ok:r.ok|0,bad:(r.b||[]).filter(k=>D[k]),sel:r.s,ck:!!r.c,flip:false});return true}catch(e){return false}}
+function build(keys){S.pool=sh(keys).map(k=>({k,d:D[k],o:sh(D[k].slice(2))}));Object.assign(S,{i:0,ci:0,ok:0,bad:[],sel:null,ck:false,flip:false});draw()}
+const src=()=>D.map((d,k)=>k).filter(k=>S.topic=="all"||D[k][0]==S.topic);
+function head(){
+ $("#modes").innerHTML=[["quiz","📝 Quiz"],["cards","🗂️ Tarjetas"],["doc","📖 Resumen"]].map(([k,l])=>`<button class="tab" aria-pressed="${S.mode==k}" data-m="${k}">${l}</button>`).join("")+(S.mode!="doc"?`<button class="tab" data-a="mix">🔀 Nuevo intento</button>`:"");
+ $("#topics").innerHTML=[["all","Todos ("+D.length+")"],...Object.entries(T).map(([k,v])=>[k,v+" ("+D.filter(d=>d[0]==k).length+")"])].map(([k,l])=>`<button class="chip" aria-pressed="${S.topic==k}" data-t="${k}">${l}</button>`).join("")}
+function draw(){head();save();const n=S.pool.length;
+ if(S.mode=="doc"){app.innerHTML=`<div class="card res">${Object.keys(RES).filter(k=>S.topic=="all"||S.topic==k).map(k=>RES[k]).join("")}</div>`;return}
+ if(S.mode=="cards"){const c=Math.min(S.ci,n-1),d=S.pool[c].d;
+  app.innerHTML=`<div class="bar"><i style="width:${(c+1)/n*100}%"></i></div><div class="meta"><span>Tarjeta ${c+1} de ${n}</span><span>${T[d[0]]}</span></div>
+  <div class="card fc ${S.flip?"back":""}" data-f="1">${S.flip?`<small>Respuesta</small><p class="q">${d[2]}</p>`:`<small>Pregunta · toca para voltear</small><p class="q">${d[1]}</p>`}</div>
+  <div class="row"><button class="btn" data-a="prev" ${c?"":"disabled"}>← Anterior</button><button class="btn p" data-a="next" ${c<n-1?"":"disabled"}>Siguiente →</button><button class="btn" data-a="mix">🔀 Mezclar</button></div>`;return}
+ if(S.i>=n){const pct=Math.round(S.ok/n*100);
+  app.innerHTML=`<div class="card"><div class="meta"><span>Resultado</span></div><div class="big">${S.ok} / ${n} · ${pct}%</div><p>${pct>=80?"¡Excelente! Ya dominas este tema.":pct>=60?"Vas bien. Repasa las falladas.":"Repasa con las tarjetas y vuelve a intentarlo."}</p>
+  <div class="row"><button class="btn p" data-a="mix">🔀 Mezclar y reiniciar</button>${S.bad.length?`<button class="btn" data-a="retry">Repetir falladas (${S.bad.length})</button>`:""}</div>
+  ${S.bad.map(k=>`<div class="li">${D[k][1]}<br><b>✔ ${D[k][2]}</b></div>`).join("")}</div>`;return}
+ const p=S.pool[S.i],d=p.d,good=S.ck&&p.o[S.sel]==d[2];
+ app.innerHTML=`<div class="bar"><i style="width:${S.i/n*100}%"></i></div><div class="meta"><span>Pregunta ${S.i+1} de ${n}</span><span>Aciertos: ${S.ok}</span></div>
+ <div class="card"><span class="tag">${T[d[0]]}</span><p class="q">${d[1]}</p>
+ ${p.o.map((o,k)=>`<button class="o ${S.ck?(o==d[2]?"ok":k==S.sel?"no":""):(k==S.sel?"sl":"")}" data-o="${k}" ${S.ck?"disabled":""}>${o}</button>`).join("")}
+ ${S.ck?`<div class="fb ${good?"ok":"no"}">${good?"✔ ¡Correcto!":"✘ Incorrecto. La respuesta correcta es: "+d[2]}</div><div class="row"><button class="btn p" data-a="next">${S.i<n-1?"Siguiente →":"Ver resultado"}</button></div>`:`<div class="row"><button class="btn p" data-a="val" ${S.sel===null?"disabled":""}>Validar</button></div>`}</div>`}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-m],[data-t],[data-o],[data-a],[data-f]");if(!b)return;const q=b.dataset;
+ if(q.m){S.mode=q.m;S.flip=false;draw()}
+ else if(q.t){S.topic=q.t;build(src())}
+ else if(q.f){S.flip=!S.flip;draw()}
+ else if(q.o!==undefined){if(!S.ck){S.sel=+q.o;draw()}}
+ else{const a=q.a,cm=S.mode=="cards";
+  if(a=="mix")build(src());else if(a=="retry")build(S.bad);
+  else if(a=="val"&&S.sel!==null&&!S.ck){const p=S.pool[S.i];S.ck=true;if(p.o[S.sel]==p.d[2])S.ok++;else S.bad.push(p.k);draw()}
+  else if(a=="next"){if(cm)S.ci++;else{S.i++;S.sel=null;S.ck=false}S.flip=false;draw()}
+  else if(a=="prev"){S.ci--;S.flip=false;draw()}}});
+if(load())draw();else build(src());
+</script></body></html>
