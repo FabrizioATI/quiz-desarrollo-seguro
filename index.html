@@ -29,9 +29,10 @@ h1{font-size:22px;margin:0 0 2px}.sub{color:var(--mut);margin:0 0 16px;font-size
 .o.sl{border-color:var(--pri);background:var(--prib)}.fb{padding:12px 14px;border-radius:12px;font-weight:600;margin-top:10px}.fb.ok{background:var(--okb);color:var(--ok)}.fb.no{background:var(--badb);color:var(--bad)}.res h1{font-size:22px;margin:0 0 6px;color:var(--pri)}.res h2{font-size:18px;margin:22px 0 6px;color:var(--pri)}.res ul,.res ol{padding-left:22px;margin:6px 0}.res li{margin:4px 0}
 .res hr{border:0;border-top:1px solid var(--bd);margin:26px 0}
 .res table{border-collapse:collapse;width:100%;font-size:14px;margin:8px 0}.res th,.res td{border:1px solid var(--bd);padding:8px;text-align:left;vertical-align:top}.res th{background:var(--prib)}
+.chip:disabled{opacity:.45;cursor:default}.ex{font-size:14px;color:var(--mut);margin:6px 0}.exs{margin-top:12px;padding:10px 12px;border-radius:12px;background:var(--prib);font-size:14px}.srch{width:100%;font:inherit;padding:10px 14px;border:1px solid var(--bd);border-radius:12px;background:var(--card);color:var(--tx);margin:6px 0}.pr{padding:10px 0;border-top:1px solid var(--bd)}.pr .btn{padding:4px 10px;font-size:13px}
 </style></head><body><div class="w">
 <h1>🛡️ Quiz: Desarrollo Seguro</h1><p class="sub">Practica por tema con quiz y tarjetas</p>
-<div class="row" id="modes"></div><div class="row" id="topics"></div><div id="app"></div></div>
+<div class="row" id="modes"></div><div class="row" id="topics"></div><div class="row" id="opts"></div><div id="app"></div></div>
 <script>
 const T={1:"Seguridad en el ciclo de vida de desarrollo de software (SDLC)",2:"Fundamentos de la Programación Segura",3:"Pruebas Estáticas y Dinámicas de Aplicaciones Seguras (SAST/DAST)",4:"Seguridad en Aplicaciones Web",5:"Desarrollo Seguro de Aplicaciones Móviles",6:"Desarrollo Seguro de APIs",7:"DevSecOps: Desarrollo, Seguridad y Operaciones",8:"Seguridad de la IA",9:"Vulnerabilidades de Sitios Web",10:"Ataques",11:"Tipos de Pruebas de Seguridad",12:"Modelos de Amenazas",13:"Principios para Proteger Aplicaciones y Sistemas",14:"APIs",15:"Seguridad en la Nube",16:"HTTPS y TLS",17:"ACID"};
 // [tema, pregunta, correcta, trampa1, trampa2, trampa3]
@@ -423,43 +424,77 @@ RES[14]="<h1>14. APIs</h1><h2>APIs (Interfaces de Programación de Aplicaciones)
 RES[15]="<h1>15. Seguridad en la nube</h1><h2>Cloud Security (Seguridad en la Nube)</h2><p>Medidas y controles que protegen datos, aplicaciones e infraestructura en la nube.</p><ul><li><strong>Shared Responsibility Model (Modelo de Responsabilidad Compartida):</strong><ul><li><strong>Proveedor:</strong> protege la infraestructura física, la red, la virtualización y los servicios gestionados.</li><li><strong>Cliente:</strong> protege la configuración, los accesos, los datos, las aplicaciones y los sistemas operativos.</li></ul></li><li><strong>Áreas clave:</strong><ul><li><strong>IAM, Identity and Access Management (Gestión de Identidad y Acceso):</strong> quién accede a cada recurso.</li><li><strong>Data Security (Seguridad de Datos):</strong> cifrado en tránsito y en reposo.</li><li><strong>Network Security (Seguridad de la Red):</strong> firewalls, reglas de red y controles de acceso.</li><li><strong>Workload Protection (Protección de Cargas de Trabajo):</strong> máquinas virtuales, contenedores y serverless.</li><li><strong>Monitoring and Threat Detection (Monitoreo y Detección de Amenazas):</strong> vigilancia constante de actividad sospechosa.</li></ul></li></ul>";
 RES[16]="<h1>16. HTTPS y TLS</h1><h2>HTTPS and TLS (Protocolos de Seguridad Web HTTPS y TLS)</h2><ul><li><strong>HTTPS:</strong> la versión segura de HTTP. Protege la comunicación entre navegador y servidor.</li><li><strong>TLS (Transport Layer Security):</strong> el protocolo de cifrado que usa HTTPS.<ul><li>Protege los datos <strong>en tránsito</strong>.</li><li>Previene sobre todo ataques de interceptación (Man-in-the-Middle).</li><li>Usa certificados digitales para autenticar al servidor.</li><li>Antes de confiar, se verifica que el certificado esté firmado por una <strong>CA (Autoridad Certificadora)</strong> confiable.</li><li>Si el certificado es inválido, el navegador muestra una advertencia.</li></ul></li><li><strong>Las 3 protecciones de TLS:</strong><ol type=\"1\"><li><strong>Encryption (Cifrado):</strong> nadie más puede leer los datos.</li><li><strong>Integrity (Integridad):</strong> los datos no se alteran en el camino.</li><li><strong>Authentication (Autenticación):</strong> el sitio es legítimo, gracias a los certificados.</li></ol></li><li><strong>TLS Handshake (Apretón de Manos TLS):</strong> proceso inicial donde cliente y servidor acuerdan cómo proteger la conexión. Se negocian algoritmos y claves. El cifrado de datos empieza <strong>después</strong> del handshake.</li></ul>";
 RES[17]="<h1>17. ACID</h1><h2>ACID (Propiedades de las Transacciones en Bases de Datos)</h2><p>Garantizan transacciones confiables y evitan corrupción y pérdida de datos.</p><ul><li><strong>A, Atomicity (Atomicidad):</strong> todo se ejecuta o nada. No quedan datos a medias.</li><li><strong>C, Consistency (Consistencia):</strong> la base de datos pasa de un estado válido a otro válido.</li><li><strong>I, Isolation (Aislamiento):</strong> una transacción no interfiere con otra.</li><li><strong>D, Durability (Durabilidad):</strong> lo guardado no se pierde, aunque falle el sistema.</li></ul>";
-const $=s=>document.querySelector(s),app=$("#app"),KEY="quizDS_v1";
+const $=s=>document.querySelector(s),app=$("#app"),LS=localStorage;
 const sh=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
-let S={mode:"quiz",topic:"all",pool:[],i:0,ci:0,ok:0,bad:[],sel:null,ck:false,flip:false};
-const save=()=>{try{localStorage.setItem(KEY,JSON.stringify({m:S.mode,t:S.topic,p:S.pool.map(p=>[p.k,p.o]),i:S.i,ci:S.ci,ok:S.ok,b:S.bad,s:S.sel,c:S.ck}))}catch(e){}};
-function load(){try{const r=JSON.parse(localStorage.getItem(KEY)||"null");
- if(!r||!Array.isArray(r.p)||!r.p.length||!r.p.every(([k,o])=>D[k]&&Array.isArray(o)&&o.length==4))return false;
- S.pool=r.p.map(([k,o])=>({k,d:D[k],o}));Object.assign(S,{mode:r.m||"quiz",topic:r.t||"all",i:r.i|0,ci:r.ci|0,ok:r.ok|0,bad:(r.b||[]).filter(k=>D[k]),sel:r.s,ck:!!r.c,flip:false});return true}catch(e){return false}}
-function build(keys){S.pool=sh(keys).map(k=>({k,d:D[k],o:sh(D[k].slice(2))}));Object.assign(S,{i:0,ci:0,ok:0,bad:[],sel:null,ck:false,flip:false});draw()}
-const src=()=>D.map((d,k)=>k).filter(k=>S.topic=="all"||D[k][0]==S.topic);
-function head(){
- $("#modes").innerHTML=[["quiz","📝 Quiz"],["cards","🗂️ Tarjetas"],["doc","📖 Resumen"]].map(([k,l])=>`<button class="tab" aria-pressed="${S.mode==k}" data-m="${k}">${l}</button>`).join("")+(S.mode!="doc"?`<button class="tab" data-a="mix">🔀 Nuevo intento</button>`:"");
- $("#topics").innerHTML=[["all","Todos ("+D.length+")"],...Object.entries(T).map(([k,v])=>[k,v+(D.some(d=>d[0]==k)?" ("+D.filter(d=>d[0]==k).length+")":" · solo resumen")])].map(([k,l])=>`<button class="chip" aria-pressed="${S.topic==k}" data-t="${k}">${l}</button>`).join("")}
-function draw(){head();save();const n=S.pool.length;
- if(S.mode=="doc"){app.innerHTML=`<div class="card res">${Object.keys(RES).filter(k=>S.topic=="all"||S.topic==k).map(k=>RES[k]).join("<hr>")}</div>`;return}
- if(!n){app.innerHTML=`<div class="card"><p class="q">Aún no hay preguntas para este tema.</p><p>Por ahora puedes leer su resumen en la pestaña 📖 Resumen.</p></div>`;return}
- if(S.mode=="cards"){const c=Math.min(S.ci,n-1),d=S.pool[c].d;
-  app.innerHTML=`<div class="bar"><i style="width:${(c+1)/n*100}%"></i></div><div class="meta"><span>Tarjeta ${c+1} de ${n}</span><span>${T[d[0]]}</span></div>
-  <div class="card fc ${S.flip?"back":""}" data-f="1">${S.flip?`<small>Respuesta</small><p class="q">${d[2]}</p>`:`<small>Pregunta · toca para voltear</small><p class="q">${d[1]}</p>`}</div>
-  <div class="row"><button class="btn" data-a="prev" ${c?"":"disabled"}>← Anterior</button><button class="btn p" data-a="next" ${c<n-1?"":"disabled"}>Siguiente →</button><button class="btn" data-a="mix">🔀 Mezclar</button></div>`;return}
+const kq=d=>d[0]+"|"+d[1],tr=(s,n)=>s.length>n?s.slice(0,n-1)+"…":s,norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,""),fm=s=>Math.floor(s/60)+":"+String(s%60).padStart(2,"0");
+const ld=(k,f)=>{try{return JSON.parse(LS.getItem(k))||f}catch(e){return f}},sv=(k,v)=>{try{LS.setItem(k,JSON.stringify(v))}catch(e){}};
+let ST=ld("qds_st",{}),FL=ld("qds_fl",{}),KN=ld("qds_kn",{});
+const CM={};D.forEach(d=>{if(!CM[d[2]])CM[d[2]]=d});
+let S={mode:"quiz",tp:[],n:0,tm:false,el:0,pool:[],i:0,ok:0,bad:[],sel:null,ck:false,cp:[],ci:0,fl:false,unk:false,q:"",rc:false};
+const keep=["mode","tp","n","tm","el","pool","i","ok","bad","sel","ck","cp","ci","unk"];
+const save=()=>{const o={};keep.forEach(k=>o[k]=S[k]);sv("qds_s2",o)};
+function load(){const r=ld("qds_s2",null);if(!r||!Array.isArray(r.pool)||!r.pool.length||!r.pool.every(p=>D[p.k]&&Array.isArray(p.o)&&p.o.length==4))return false;Object.assign(S,r);S.cp=(S.cp||[]).filter(k=>D[k]);return true}
+const src=()=>D.map((d,k)=>k).filter(k=>!S.tp.length||S.tp.includes(D[k][0]));
+function buildQ(keys,all){keys=sh(keys);if(S.n&&!all)keys=keys.slice(0,S.n);S.pool=keys.map(k=>({k,o:sh(D[k].slice(2))}));Object.assign(S,{i:0,ok:0,bad:[],sel:null,ck:false,el:0});draw()}
+function buildC(){S.cp=sh(src().filter(k=>!(S.unk&&KN[kq(D[k])])));S.ci=0;S.fl=false;draw()}
+function head(){const q=S.mode=="quiz",nf=Object.keys(FL).length;
+ $("#modes").innerHTML=[["quiz","📝 Quiz"],["cards","🗂️ Tarjetas"],["doc","📖 Resumen"],["prog","📊 Progreso"]].map(([k,l])=>`<button class="tab" aria-pressed="${S.mode==k}" data-m="${k}">${l}</button>`).join("");
+ $("#topics").innerHTML=S.mode=="prog"?"":[["all","Todos ("+D.length+")",!S.tp.length],...Object.entries(T).map(([k,v])=>[k,k+". "+v+" ("+D.filter(d=>d[0]==k).length+")",S.tp.includes(k)])].map(([k,l,on])=>`<button class="chip" aria-pressed="${on}" data-t="${k}">${l}</button>`).join("");
+ $("#opts").innerHTML=q?`<span class="sub">Preguntas:</span>`+[10,20,40,0].map(n=>`<button class="chip" aria-pressed="${S.n==n}" data-n="${n}">${n||"Todas"}</button>`).join("")+`<button class="chip" aria-pressed="${S.tm}" data-tm="1">⏱ Cronómetro</button><button class="chip" data-a="mix">🔀 Nuevo intento</button><button class="chip" data-a="fails" ${nf?"":"disabled"}>🎯 Mis falladas (${nf})</button>`:S.mode=="cards"?`<button class="chip" aria-pressed="${S.unk}" data-u="1">👁 Solo las que no sé</button>`:""}
+function draw(){head();save();({quiz,cards,doc,prog})[S.mode]()}
+function quiz(){const n=S.pool.length;
+ if(!n){app.innerHTML=`<div class="card"><p class="q">No hay preguntas con esta selección.</p></div>`;return}
  if(S.i>=n){const pct=Math.round(S.ok/n*100);
-  app.innerHTML=`<div class="card"><div class="meta"><span>Resultado</span></div><div class="big">${S.ok} / ${n} · ${pct}%</div><p>${pct>=80?"¡Excelente! Ya dominas este tema.":pct>=60?"Vas bien. Repasa las falladas.":"Repasa con las tarjetas y vuelve a intentarlo."}</p>
-  <div class="row"><button class="btn p" data-a="mix">🔀 Mezclar y reiniciar</button>${S.bad.length?`<button class="btn" data-a="retry">Repetir falladas (${S.bad.length})</button>`:""}</div>
-  ${S.bad.map(k=>`<div class="li">${D[k][1]}<br><b>✔ ${D[k][2]}</b></div>`).join("")}</div>`;return}
- const p=S.pool[S.i],d=p.d,good=S.ck&&p.o[S.sel]==d[2];
- app.innerHTML=`<div class="bar"><i style="width:${S.i/n*100}%"></i></div><div class="meta"><span>Pregunta ${S.i+1} de ${n}</span><span>Aciertos: ${S.ok}</span></div>
+  app.innerHTML=`<div class="card"><div class="big">${S.ok} / ${n} · ${pct}%</div>${S.tm?`<p>⏱ Tiempo: ${fm(S.el)}</p>`:""}<p>${pct>=80?"¡Excelente! Ya dominas este tema.":pct>=60?"Vas bien. Repasa las falladas.":"Repasa con las tarjetas y vuelve a intentarlo."}</p><div class="row"><button class="btn p" data-a="mix">🔀 Nuevo intento</button>${S.bad.length?`<button class="btn" data-a="retry">Repetir falladas (${S.bad.length})</button>`:""}</div>${S.bad.map(k=>`<div class="li">${D[k][1]}<br><b>✔ ${D[k][2]}</b></div>`).join("")}</div>`;return}
+ const p=S.pool[S.i],d=D[p.k],good=S.ck&&p.o[S.sel]==d[2];
+ const ex=S.ck?p.o.filter(o=>o!=d[2]).map(o=>{const m=CM[o];return m&&m!=d?`<div class="ex">“${tr(o,70)}” es la respuesta de: ${tr(m[1],90)} <i>(${tr(T[m[0]],45)})</i></div>`:""}).join(""):"";
+ app.innerHTML=`<div class="bar"><i style="width:${S.i/n*100}%"></i></div><div class="meta"><span>Pregunta ${S.i+1} de ${n}</span><span>${S.tm?`⏱ <b id="tm">${fm(S.el)}</b> · `:""}Aciertos: ${S.ok}</span></div>
  <div class="card"><span class="tag">${T[d[0]]}</span><p class="q">${d[1]}</p>
  ${p.o.map((o,k)=>`<button class="o ${S.ck?(o==d[2]?"ok":k==S.sel?"no":""):(k==S.sel?"sl":"")}" data-o="${k}" ${S.ck?"disabled":""}>${o}</button>`).join("")}
- ${S.ck?`<div class="fb ${good?"ok":"no"}">${good?"✔ ¡Correcto!":"✘ Incorrecto. La respuesta correcta es: "+d[2]}</div><div class="row"><button class="btn p" data-a="next">${S.i<n-1?"Siguiente →":"Ver resultado"}</button></div>`:`<div class="row"><button class="btn p" data-a="val" ${S.sel===null?"disabled":""}>Validar</button></div>`}</div>`}
-document.addEventListener("click",e=>{const b=e.target.closest("[data-m],[data-t],[data-o],[data-a],[data-f]");if(!b)return;const q=b.dataset;
- if(q.m){S.mode=q.m;S.flip=false;draw()}
- else if(q.t){S.topic=q.t;build(src())}
- else if(q.f){S.flip=!S.flip;draw()}
+ ${S.ck?`<div class="fb ${good?"ok":"no"}">${good?"✔ ¡Correcto!":"✘ Incorrecto. La respuesta correcta es: "+d[2]}</div>${ex?`<div class="exs"><b>Para no confundirte:</b>${ex}</div>`:""}<div class="row"><button class="btn p" data-a="next">${S.i<n-1?"Siguiente →":"Ver resultado"}</button></div>`:`<div class="row"><button class="btn p" data-a="val" ${S.sel===null?"disabled":""}>Validar</button></div>`}</div>`}
+function cards(){const n=S.cp.length;
+ if(!n){app.innerHTML=`<div class="card"><p class="q">${S.unk?"¡No te quedan tarjetas pendientes! 🎉":"No hay tarjetas con esta selección."}</p></div>`;return}
+ const c=Math.min(S.ci,n-1),d=D[S.cp[c]];
+ app.innerHTML=`<div class="bar"><i style="width:${(c+1)/n*100}%"></i></div><div class="meta"><span>Tarjeta ${c+1} de ${n}</span><span>${T[d[0]]}${KN[kq(d)]?" · ✅ la sé":""}</span></div>
+ <div class="card fc ${S.fl?"back":""}" data-f="1">${S.fl?`<small>Respuesta</small><p class="q">${d[2]}</p>`:`<small>Pregunta · toca para voltear</small><p class="q">${d[1]}</p>`}</div>
+ <div class="row">${S.fl?`<button class="btn p" data-k="1">✅ La sé</button><button class="btn" data-k="0">❌ No la sé</button>`:""}</div>
+ <div class="row"><button class="btn" data-a="prev" ${c?"":"disabled"}>← Anterior</button><button class="btn" data-a="next" ${c<n-1?"":"disabled"}>Siguiente →</button><button class="btn" data-a="mixc">🔀 Mezclar</button></div>
+ <p class="sub">Sabidas: ${Object.keys(KN).length} de ${D.length}</p>`}
+function doc(){const ks=Object.keys(RES).filter(k=>!S.tp.length||S.tp.includes(k));
+ app.innerHTML=`<input id="q" class="srch" type="search" placeholder="🔎 Buscar en el resumen…" value="${S.q.replace(/"/g,"&quot;")}"><div class="card res" id="rs">${ks.map(k=>RES[k]).join("<hr>")}</div>`;filt(S.q)}
+function filt(q){const r=$("#rs");if(!r)return;q=norm(q.trim());let hd=null,any=false;
+ const fin=()=>{if(hd)hd.style.display=(!q||any)?"":"none"};
+ const own=li=>norm([...li.childNodes].filter(n=>!(n.nodeType==1&&/^(UL|OL)$/.test(n.tagName))).map(n=>n.textContent).join(""));
+ [...r.children].forEach(e=>{
+  if(/^H[12]$/.test(e.tagName)){fin();hd=e;any=false;e.style.display="";return}
+  let show=true;const lis=[...e.querySelectorAll("li")];
+  if(!q)lis.forEach(l=>l.style.display="");
+  else if(lis.length){let v=0;lis.forEach(l=>{let a=l,m=false;while(a){if(own(a).includes(q)){m=true;break}a=a.parentElement?a.parentElement.closest("li"):null}
+   if(!m)m=[...l.querySelectorAll("li")].some(x=>own(x).includes(q));l.style.display=m?"":"none";if(m)v++});show=v>0}
+  else show=norm(e.textContent).includes(q);
+  e.style.display=show?"":"none";if(show)any=true});fin()}
+function prog(){let ot=0,oo=0;
+ const rows=Object.keys(T).map(k=>{const [o,t]=ST[k]||[0,0];ot+=t;oo+=o;const p=t?Math.round(o/t*100):0;
+  return `<div class="pr"><div class="meta"><span><b>${k}.</b> ${T[k]}</span><span>${t?`${o}/${t} · ${p}%`:"Sin intentos"}</span></div><div class="bar"><i style="width:${p}%;${t&&p<60?"background:var(--bad)":t&&p>=80?"background:var(--ok)":""}"></i></div><button class="btn" data-p="${k}">Practicar</button></div>`}).join("");
+ app.innerHTML=`<div class="card"><div class="big">${ot?Math.round(oo/ot*100):0}%</div><p>${oo} aciertos de ${ot} respuestas en total</p>${rows}<div class="row"><button class="btn" data-a="reset">${S.rc?"⚠ Toca otra vez para borrar":"🗑 Borrar progreso"}</button></div></div>`}
+document.addEventListener("input",e=>{if(e.target.id=="q"){S.q=e.target.value;filt(S.q)}});
+document.addEventListener("click",e=>{const b=e.target.closest("[data-m],[data-t],[data-o],[data-a],[data-f],[data-n],[data-tm],[data-u],[data-k],[data-p]");if(!b||b.disabled)return;const q=b.dataset;
+ if(q.m){S.mode=q.m;S.fl=false;S.rc=false;draw()}
+ else if(q.t){S.tp=q.t=="all"?[]:S.tp.includes(q.t)?S.tp.filter(x=>x!=q.t):[...S.tp,q.t];buildQ(src());buildC()}
+ else if(q.n!==undefined){S.n=+q.n;buildQ(src())}
+ else if(q.tm){S.tm=!S.tm;draw()}
+ else if(q.u){S.unk=!S.unk;buildC()}
+ else if(q.f){S.fl=!S.fl;draw()}
+ else if(q.k!==undefined){const d=D[S.cp[S.ci]];if(q.k=="1")KN[kq(d)]=1;else delete KN[kq(d)];sv("qds_kn",KN);S.fl=false;if(S.ci<S.cp.length-1)S.ci++;draw()}
+ else if(q.p){S.tp=[q.p];S.mode="quiz";buildC();buildQ(src())}
  else if(q.o!==undefined){if(!S.ck){S.sel=+q.o;draw()}}
- else{const a=q.a,cm=S.mode=="cards";
-  if(a=="mix")build(src());else if(a=="retry")build(S.bad);
-  else if(a=="val"&&S.sel!==null&&!S.ck){const p=S.pool[S.i];S.ck=true;if(p.o[S.sel]==p.d[2])S.ok++;else S.bad.push(p.k);draw()}
-  else if(a=="next"){if(cm)S.ci++;else{S.i++;S.sel=null;S.ck=false}S.flip=false;draw()}
-  else if(a=="prev"){S.ci--;S.flip=false;draw()}}});
-if(load())draw();else build(src());
+ else{const a=q.a;
+  if(a=="mix")buildQ(src());else if(a=="mixc")buildC();else if(a=="retry")buildQ(S.bad,true);
+  else if(a=="fails"){S.mode="quiz";buildQ(D.map((d,k)=>k).filter(k=>FL[kq(D[k])]),true)}
+  else if(a=="val"&&S.sel!==null&&!S.ck){const p=S.pool[S.i],d=D[p.k],t=d[0],g=p.o[S.sel]==d[2];S.ck=true;ST[t]=ST[t]||[0,0];ST[t][1]++;if(g){S.ok++;ST[t][0]++;delete FL[kq(d)]}else{S.bad.push(p.k);FL[kq(d)]=1}sv("qds_st",ST);sv("qds_fl",FL);draw()}
+  else if(a=="next"){if(S.mode=="cards"){S.ci++;S.fl=false}else{S.i++;S.sel=null;S.ck=false}draw()}
+  else if(a=="prev"){S.ci--;S.fl=false;draw()}
+  else if(a=="reset"){if(!S.rc)S.rc=true;else{ST={};sv("qds_st",ST);S.rc=false}draw()}}});
+setInterval(()=>{if(S.tm&&S.mode=="quiz"&&S.i<S.pool.length){S.el++;const e=$("#tm");if(e)e.textContent=fm(S.el);if(S.el%10==0)save()}},1000);
+if(load()){if(!S.cp.length)S.cp=sh(src());draw()}else{buildC();buildQ(src())}
 </script></body></html>
